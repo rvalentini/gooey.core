@@ -1,4 +1,4 @@
-(ns ^:figwheel-hooks goey.core
+(ns ^:figwheel-hooks gooey.core
   (:require
    [goog.dom :as gdom]
    [reagent.core :as reagent]))
