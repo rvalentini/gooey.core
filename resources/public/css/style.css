@@ -9,25 +9,22 @@
     right:0;
 }
 
-.square {
+.circle {
     position:absolute;
     background:#5677fc;
-    left:50%;
-    top:50%;
     width:100px;
     height:100px;
     margin-top:-50px;
     margin-left:-50px;
+    border-radius: 100%;
 }
 
-#container .square:nth-child(1) {
+#container .circle:nth-child(n) {
     animation: square-left-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 4s infinite;
 }
 
-#container .square:nth-child(2) {
+#container .circle:nth-child(n+1) {
     animation: square-right-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 4s infinite;
-    width: 140px;
-    height: 140px;
 }
 
 

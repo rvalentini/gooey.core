@@ -8,7 +8,8 @@
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.520"]
-                 [reagent "0.8.1"]]
+                 [reagent "0.8.1"]
+                 [hipo "0.5.2"]]
 
   :source-paths ["src"]
 

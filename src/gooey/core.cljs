@@ -1,7 +1,8 @@
 (ns ^:figwheel-hooks gooey.core
   (:require
    [goog.dom :as gdom]
-   [reagent.core :as reagent]))
+   [reagent.core :as reagent]
+   [hipo.core :as hipo]))
 
 
 (defn blur-filter []
@@ -24,6 +25,35 @@
       [:feComposite {:in "SourceGraphic" :in2 "goo" :operator "atop"}]]]])
 
 
+(defn rand-position []
+  (-> (rand-int 100)
+      (max 10)
+      (min 90)))
+
+
+(defn add-circle []
+  (.log js/console "I GOT CALLED!")
+  (let [container (.getElementById js/document "container")
+        circles (.-childNodes container)
+        new-circle (hipo/create [:div {:class "circle"
+                                :style {:left "40%"
+                                        :top  "40%"}}])]
+
+    (set! (.-top (.-style new-circle)) (str (rand-position) "%"))
+    (set! (.-left (.-style new-circle)) (str (rand-position) "%"))
+    (.appendChild container new-circle)
+
+    (.forEach circles (fn [circle]
+                        (let [left (.-left (.getBoundingClientRect circle))
+                              top (.-top (.getBoundingClientRect circle))]
+                          #_(.appendChild container (hipo/create [:div {:class "circle"
+                                                                      :style {:left left
+                                                                              :top  top}}]))))))
+
+
+  )
+
+
 ;; define your app data so that it doesn't get over-written on reload
 
 (defn get-app-element []
@@ -32,12 +62,15 @@
 (defn hello-world []
   [:div
    [:div {:id "container"}
-    [:div {:class "square"}]
-    [:div {:class "square"}]]
-    ;[:div {:class "square"}]
+    [:div {:class "circle" :style {:left "60%"
+                                   :top  "60%"}}]
+    #_[:div {:class "circle"}]]
+   ;[:div {:class "circle"}]
    (blur-filter)
-   (goo-filter)
-   ])
+   (goo-filter)]
+
+
+  )
 
 (defn mount [el]
   (reagent/render-component [hello-world] el))
@@ -49,6 +82,9 @@
 ;; conditionally start your application based on the presence of an "app" element
 ;; this is particularly helpful for testing this ns without launching the app
 (mount-app-element)
+
+(.setInterval js/window add-circle 2000)
+
 
 ;; specify reload hook with ^;after-load metadata
 (defn ^:after-load on-reload []
