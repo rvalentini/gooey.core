@@ -17,28 +17,100 @@
     margin-top:-50px;
     margin-left:-50px;
     border-radius: 100%;
+    animation-fill-mode: forwards;
 }
 
-#container .circle:nth-child(n) {
-    animation: square-left-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 4s infinite;
+.spread-right {
+    animation: spread-right-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s;
+    animation-fill-mode: forwards;
 }
 
-#container .circle:nth-child(n+1) {
-    animation: square-right-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 4s infinite;
+.spread-left {
+    animation: spread-left-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s;
+    animation-fill-mode: forwards;
+}
+
+.spread-top {
+    animation: spread-top-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s;
+    animation-fill-mode: forwards;
+}
+
+.spread-bottom {
+    animation: spread-bottom-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s;
+    animation-fill-mode: forwards;
+}
+
+.spread-left-top {
+    animation: spread-left-top-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s;
+    animation-fill-mode: forwards;
+}
+
+.spread-right-top {
+    animation: spread-right-top-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s;
+    animation-fill-mode: forwards;
+}
+
+.spread-left-bottom {
+    animation: spread-left-bottom-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s;
+    animation-fill-mode: forwards;
+}
+
+.spread-right-bottom {
+    animation: spread-right-bottom-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s;
+    animation-fill-mode: forwards;
+}
+
+.shake {
+    position: absolute;
+    animation: shake-anim 1.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes spread-right-anim {
+    from { transform:  translate(0,0);}
+    to { transform:  translate(130px,0);}
+}
+
+@keyframes spread-left-anim {
+    from { transform:  translate(0,0);}
+    to { transform:  translate(-160px,0);}
+}
+
+@keyframes spread-top-anim {
+    from { transform:  translate(0,0);}
+    to { transform:  translate(0,-155px);}
+}
+
+@keyframes spread-bottom-anim {
+    from { transform:  translate(0,0);}
+    to { transform:  translate(0,145px);}
+}
+
+@keyframes spread-left-top-anim {
+    from { transform:  translate(0,0);}
+    to { transform:  translate(-160px,-155px);}
+}
+
+@keyframes spread-right-top-anim {
+    from { transform:  translate(0,0);}
+    to { transform:  translate(130px,-155px);}
+}
+
+@keyframes spread-left-bottom-anim {
+    from { transform:  translate(0,0);}
+    to { transform:  translate(-160px,145px);}
+}
+
+@keyframes spread-right-bottom-anim {
+    from { transform:  translate(0,0);}
+    to { transform:  translate(130px,145px);}
 }
 
 
-@keyframes square-left-anim {
-    0% {  transform: scale(1.1) translate(0,0);}
-    33% { transform: scale(0.9) translate(-100px,0);}
-    62% { transform: scale(0.9) translate(-100px,-100px);}
-    94% { transform: scale(1.1) translate(0,0);}
+@keyframes shake-anim {
+    10%, 90% {transform: translate3d(-1px, 0, 0);}
+    20%, 80% {transform: translate3d(2px, 0, 0);}
+    30%, 50%, 70% {transform: translate3d(-4px, 0, 0);}
+    40%, 60% {transform: translate3d(4px, 0, 0);}
 }
 
-@keyframes square-right-anim {
-    0% {  transform: scale(1.1) translate(0,0);}
-    33% { transform: scale(0.9) translate(100px,0);}
-    62% { transform: scale(0.9) translate(100px,-100px);}
-    94% { transform: scale(1.1) translate(0,0); }
-}
 

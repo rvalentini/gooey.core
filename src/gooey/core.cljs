@@ -5,6 +5,8 @@
    [hipo.core :as hipo]))
 
 
+(def spread-direction ["right" "left" "top" "bottom" "left-top" "right-top" "left-bottom" "right-bottom"])
+
 (defn blur-filter []
 [:svg {:xmlns "http://www.w3.org/2000/svg" :version "1.1"}
  [:defs
@@ -31,27 +33,36 @@
       (min 90)))
 
 
+(defn pixel-to-percent [top left]
+  (let [height (.-innerHeight js/window)
+        width (.-innerWidth js/window)
+        height-percent (str (* 100 (/ (+ top 50) height)) "%")
+        width-percent (str (* 100 (/ (+ left 50) width)) "%")]
+    [height-percent width-percent]))
+
+
+(defn random-spread-animation []
+  (str "spread-" (rand-nth spread-direction)))
+
+
 (defn add-circle []
-  (.log js/console "I GOT CALLED!")
   (let [container (.getElementById js/document "container")
-        circles (.-childNodes container)
-        new-circle (hipo/create [:div {:class "circle"
-                                :style {:left "40%"
-                                        :top  "40%"}}])]
-
-    (set! (.-top (.-style new-circle)) (str (rand-position) "%"))
-    (set! (.-left (.-style new-circle)) (str (rand-position) "%"))
-    (.appendChild container new-circle)
-
-    (.forEach circles (fn [circle]
-                        (let [left (.-left (.getBoundingClientRect circle))
-                              top (.-top (.getBoundingClientRect circle))]
-                          #_(.appendChild container (hipo/create [:div {:class "circle"
-                                                                      :style {:left left
-                                                                              :top  top}}]))))))
-
-
-  )
+        circles (.-childNodes container)]
+    (.forEach circles (fn [div]
+                        (let [circle (.-firstChild div)
+                              left (.-left (.getBoundingClientRect circle))
+                              top (.-top (.getBoundingClientRect circle))
+                              [top-percent left-percent] (pixel-to-percent top left)
+                              random-animation (random-spread-animation)
+                              random-delay (str (rand-int 3000) "ms")
+                              new-circle (hipo/create
+                                           [:div {:class "shake"}
+                                            [:div {:class (str "circle " random-animation)}]])]
+                          (set! (.-top (.-style new-circle)) top-percent)
+                          (set! (.-left (.-style new-circle)) left-percent)
+                          (set! (.-animationDelay (.-style (.-firstChild new-circle))) random-delay)
+                          (set! (.-animationDelay (.-style new-circle)) random-delay)
+                          (.appendChild container new-circle))))))
 
 
 ;; define your app data so that it doesn't get over-written on reload
@@ -62,10 +73,10 @@
 (defn hello-world []
   [:div
    [:div {:id "container"}
-    [:div {:class "circle" :style {:left "60%"
-                                   :top  "60%"}}]
-    #_[:div {:class "circle"}]]
-   ;[:div {:class "circle"}]
+    (take 4 (repeatedly #(identity [:div
+                           [:div {:class "circle"
+                                  :style {:left (str (rand-position) "%")
+                                          :top  (str (rand-position) "%")}}]])))]
    (blur-filter)
    (goo-filter)]
 
@@ -83,7 +94,7 @@
 ;; this is particularly helpful for testing this ns without launching the app
 (mount-app-element)
 
-(.setInterval js/window add-circle 2000)
+(.setInterval js/window add-circle 3000)
 
 
 ;; specify reload hook with ^;after-load metadata
