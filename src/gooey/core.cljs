@@ -41,8 +41,28 @@
     [height-percent width-percent]))
 
 
-(defn random-spread-animation []
-  (str "spread-" (rand-nth spread-direction)))
+(defn is-out-of-bounds? [spread-direction top left]
+  (let [height (.-innerHeight js/window)
+        width (.-innerWidth js/window)
+        height-percent (* 100 (/ (+ top 50) height))
+        width-percent (* 100 (/ (+ left 50) width))]
+    (case spread-direction
+      "right" (> width-percent 90)
+      "left" (< width-percent 10)
+      "top" (< height-percent 10)
+      "bottom" (> height-percent 90)
+      "left-top" (or (< width-percent 10) (< height-percent 10))
+      "right-top" (or (> width-percent 90) (< height-percent 10))
+      "left-bottom" (or (< width-percent 10) (> height-percent 90))
+      "right-bottom" (or (> width-percent 90) (> height-percent 90))
+      :unknown)))
+
+
+(defn random-spread-animation [top left]
+  (->> spread-direction
+       (filter #(not (is-out-of-bounds? % top left)))
+       (rand-nth)
+       (str "spread-")))
 
 
 (defn add-circle []
@@ -53,7 +73,7 @@
                               left (.-left (.getBoundingClientRect circle))
                               top (.-top (.getBoundingClientRect circle))
                               [top-percent left-percent] (pixel-to-percent top left)
-                              random-animation (random-spread-animation)
+                              random-animation (random-spread-animation top left)
                               random-delay (str (rand-int 3000) "ms")
                               new-circle (hipo/create
                                            [:div {:class "shake"}
@@ -70,21 +90,18 @@
 (defn get-app-element []
   (gdom/getElement "app"))
 
-(defn hello-world []
+(defn bubble-spread []
   [:div
    [:div {:id "container"}
-    (take 4 (repeatedly #(identity [:div
+    (take 1 (repeatedly #(identity [:div
                            [:div {:class "circle"
-                                  :style {:left (str (rand-position) "%")
-                                          :top  (str (rand-position) "%")}}]])))]
+                                  :style {:left (str "50" "%")
+                                          :top  (str "50" "%")}}]])))]
    (blur-filter)
-   (goo-filter)]
-
-
-  )
+   (goo-filter)])
 
 (defn mount [el]
-  (reagent/render-component [hello-world] el))
+  (reagent/render-component [bubble-spread] el))
 
 (defn mount-app-element []
   (when-let [el (get-app-element)]
@@ -94,7 +111,7 @@
 ;; this is particularly helpful for testing this ns without launching the app
 (mount-app-element)
 
-(.setInterval js/window add-circle 3000)
+(.setInterval js/window add-circle 3200)
 
 
 ;; specify reload hook with ^;after-load metadata
