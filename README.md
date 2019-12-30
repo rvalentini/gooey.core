@@ -2,6 +2,8 @@
 
 Gooey effect animation showcase using randomly duplicating blue bubbles.  
 
+![](/resources/public/bubble-spread.gif)
+
 ## Overview
 
 This project is intended as some kind of "playground" project in order to learn and understand how SVG-filters work. 
