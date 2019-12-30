@@ -2,29 +2,11 @@
   (:require
    [goog.dom :as gdom]
    [reagent.core :as reagent]
-   [hipo.core :as hipo]))
+   [hipo.core :as hipo]
+   [gooey.svg-filter :as svg]))
 
 
-(def spread-direction ["right" "left" "top" "bottom" "left-top" "right-top" "left-bottom" "right-bottom"])
-
-(defn blur-filter []
-[:svg {:xmlns "http://www.w3.org/2000/svg" :version "1.1"}
- [:defs
-  [:filter {:id "blur"}
-   [:feGaussianBlur {:in "SourceGraphic" :stdDeviation "7" :result "shadow"}]
-   [:feOffset {:in "shadow" :dx "3" :dy "4" :result "shadow"}]
-   [:feColorMatrix {:in "shadow" :type "matrix" :values "0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0" :result "shadow"}]
-   [:feBlend {:in "SourceGraphic" :in2 "shadow"}]
-   ]]])
-
-
-(defn goo-filter []
-  [:svg {:xmlns "http://www.w3.org/2000/svg" :version "1.1"}
-   [:defs
-    [:filter {:id "goo"}
-      [:feGaussianBlur {:in "SourceGraphic" :stdDeviation "10" :result "blur"}]
-      [:feColorMatrix {:in "blur" :type "matrix" :values "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" :result "goo"}]
-      [:feComposite {:in "SourceGraphic" :in2 "goo" :operator "atop"}]]]])
+(def spread-directions ["right" "left" "top" "bottom" "left-top" "right-top" "left-bottom" "right-bottom"])
 
 
 (defn rand-position []
@@ -59,7 +41,7 @@
 
 
 (defn random-spread-animation [top left]
-  (->> spread-direction
+  (->> spread-directions
        (filter #(not (is-out-of-bounds? % top left)))
        (rand-nth)
        (str "spread-")))
@@ -85,7 +67,6 @@
                           (.appendChild container new-circle))))))
 
 
-;; define your app data so that it doesn't get over-written on reload
 
 (defn get-app-element []
   (gdom/getElement "app"))
@@ -95,10 +76,10 @@
    [:div {:id "container"}
     (take 1 (repeatedly #(identity [:div
                            [:div {:class "circle"
-                                  :style {:left (str "50" "%")
+                                  :style {:left (str "50" "%") ;use (rand-position) for random start location
                                           :top  (str "50" "%")}}]])))]
-   (blur-filter)
-   (goo-filter)])
+   (svg/blur-filter)
+   (svg/goo-filter)])
 
 (defn mount [el]
   (reagent/render-component [bubble-spread] el))
@@ -111,7 +92,7 @@
 ;; this is particularly helpful for testing this ns without launching the app
 (mount-app-element)
 
-(.setInterval js/window add-circle 3200)
+(.setInterval js/window add-circle 3200) ;this is the "redouble"-frequency in ms
 
 
 ;; specify reload hook with ^;after-load metadata
